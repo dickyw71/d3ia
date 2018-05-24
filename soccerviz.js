@@ -30,6 +30,11 @@ function createSoccerViz() {
     teamG
       .select("text").style("pointer-events", "none");
 
+    d3.selectAll("g.overallG").insert("image", "text")
+      .attr("xlink:href", d => `images/${d.team}.png`)
+      .attr("width", "45px").attr("height", "20px")
+      .attr("x", -22).attr("y", -10)
+
       // Highlight teams from same region
     teamG.on("mouseover", highlightRegion);
     function highlightRegion(d,i) {
@@ -65,6 +70,16 @@ function createSoccerViz() {
       d3.selectAll("g.overallG").select("circle").transition().duration(1000)
         .style("fill", d => colorQuantize(d[datapoint]))
         .attr("r", d => radiusScale(d[datapoint]))
+    }
+
+    // Dialog box with team stats
+    d3.text("resources/modal.html")
+      .then( html => d3.select("body").append("div").attr("id", "infobox").html(html))
+
+    teamG.on("click", teamClick)
+    function teamClick (d) {
+      d3.selectAll("td.data").data(d3.values(d))
+        .html(p => p)
     }
   }
 }
