@@ -58,13 +58,12 @@ function createSoccerViz() {
 
     function buttonClick(datapoint) {
       var maxValue = d3.max(incomingData, d => parseFloat(d[datapoint]))
-      var tenColorScale = d3.scaleOrdinal()
-          .domain(["UEFA","CONMEBOL"])
-          .range(d3.schemeCategory10)
-          .unknown("#c4b9ac")
-      var radiusScale = d3.scaleLinear().domain([0, maxValue]).range([2, 20])
+      var colorQuantize = d3.scaleQuantize()
+          .domain([0,maxValue]).range(colorbrewer.Reds[3])
+      var radiusScale = d3.scaleLinear()
+          .domain([0, maxValue]).range([2, 20])
       d3.selectAll("g.overallG").select("circle").transition().duration(1000)
-        .style("fill", p => tenColorScale(p.region))
+        .style("fill", d => colorQuantize(d[datapoint]))
         .attr("r", d => radiusScale(d[datapoint]))
     }
   }
