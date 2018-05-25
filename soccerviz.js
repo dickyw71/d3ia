@@ -2,6 +2,15 @@ function createSoccerViz() {
   d3.csv("worldcup.csv")
     .then(data => { overallTeamViz(data) })
 
+  d3.html("resources/icon.svg")
+    .then(loadSVG)
+
+  function loadSVG(svgData) {
+    d3.select(svgData).selectAll("path").each(function() {
+      d3.select("svg").node().appendChild(this);
+    })
+    d3.selectAll("path").attr("transform", "translate(50,50)");
+  }  
   function overallTeamViz(incomingData) {
     d3.select("svg")
       .append("g")
