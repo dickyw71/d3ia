@@ -2,15 +2,6 @@ function createSoccerViz() {
   d3.csv("worldcup.csv")
     .then(data => { overallTeamViz(data) })
 
-  d3.html("resources/icon.svg")
-    .then(loadSVG)
-
-  function loadSVG(svgData) {
-    d3.select(svgData).selectAll("path").each(function() {
-      d3.select("svg").node().appendChild(this);
-    })
-    d3.selectAll("path").attr("transform", "translate(50,50)");
-  }  
   function overallTeamViz(incomingData) {
     d3.select("svg")
       .append("g")
@@ -39,10 +30,17 @@ function createSoccerViz() {
     teamG
       .select("text").style("pointer-events", "none");
 
-    d3.selectAll("g.overallG").insert("image", "text")
-      .attr("xlink:href", d => `images/${d.team}.png`)
-      .attr("width", "45px").attr("height", "20px")
-      .attr("x", -22).attr("y", -10)
+    d3.html("resources/icon.svg")
+      .then(loadSVG)
+  
+    function loadSVG(svgData) {
+      d3.selectAll("g").each(function() {
+        var gParent =this;
+        d3.select(svgData).selectAll("path").each(function() {
+          gParent.appendChild(this.cloneNode(true));
+        })
+      })
+    };  
 
       // Highlight teams from same region
     teamG.on("mouseover", highlightRegion);
