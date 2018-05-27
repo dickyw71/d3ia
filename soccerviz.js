@@ -30,17 +30,30 @@ function createSoccerViz() {
     teamG
       .select("text").style("pointer-events", "none");
 
+    //  Load External SVG football and clone for each team with regional color scheme
     d3.html("resources/icon.svg")
       .then(loadSVG)
   
     function loadSVG(svgData) {
-      d3.selectAll("g").each(function() {
-        var gParent =this;
+      d3.selectAll("g.overallG").each(function() {
+        var gParent = this;
         d3.select(svgData).selectAll("path").each(function() {
           gParent.appendChild(this.cloneNode(true));
-        })
-      })
-    };  
+        });
+      });
+
+      d3.selectAll("g.overallG").each(function(d) {
+        d3.select(this).selectAll("path").datum(d);
+      });
+
+      var fourColorScale = d3.scaleOrdinal()
+        .domain(["UEFA", "CONMEBOL", "CONCACAF", "AFC"])
+        .range(["#5eafc6", "#FE9922", "#93C464", "#fcbc34" ]);
+
+      d3.selectAll("path")
+        .style("fill", p => fourColorScale(p.region))
+        .style("stroke", "black").style("stroke-width", "2px");
+    }
 
       // Highlight teams from same region
     teamG.on("mouseover", highlightRegion);
